@@ -870,7 +870,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 <script>
 // Credentials verification using SHA-256 hash (not plaintext)
-// Account: Jerome / Password: HGYC2026
+// Account: OYOY / Password: OYOY888
 var _H_USER = '96a49bafee39602c1a12e8058e322b8e2768db697e15295878e7e3a2e43e3b06';
 var _H_PASS = 'a33a0ecb1f76e282c6e36e76a1286e1e537ababorage7d4f7b3c1a1c8b6e3a5f1';
 
@@ -894,7 +894,7 @@ async function doLogin() {
   var passHash = await sha256(pass);
 
   // Direct comparison (simple and effective for standalone HTML)
-  if (user === 'Jerome' && pass === 'HGYC2026') {
+  if (user === 'OYOY' && pass === 'OYOY888') {
     errEl.textContent = '';
     document.getElementById('login-overlay').classList.add('hidden');
     document.getElementById('dashboard-content').classList.add('unlocked');
