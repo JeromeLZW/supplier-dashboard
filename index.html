@@ -695,21 +695,38 @@ input[type=number] { -moz-appearance: textfield; }
   padding: 60px 48px; text-align: center;
 }
 #section-summary .summary-hero::before { content: ''; position: absolute; top: -40%; left: -10%; width: 60%; height: 140%; background: radial-gradient(ellipse, rgba(91,141,239,0.08) 0%, transparent 70%); pointer-events: none; }
+#section-summary .summary-hero .world-map-bg {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 110%; max-width: 1400px; opacity: 0.06; pointer-events: none; z-index: 0;
+  filter: drop-shadow(0 0 30px rgba(91,141,239,0.15));
+}
 #section-summary .summary-hero h1 {
   font-size: 42px; font-weight: 800; letter-spacing: 1px; line-height: 1.2;
   background: linear-gradient(135deg, #7aadff 0%, #b07aff 50%, #f06595 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  display: inline-block; margin-bottom: 12px;
+  display: inline-block; margin-bottom: 12px; position: relative; z-index: 1;
 }
 #section-summary .summary-hero .subtitle {
   font-size: 14px; color: var(--text-dim);
   display: flex; align-items: center; justify-content: center; gap: 10px;
+  position: relative; z-index: 1;
 }
 #section-summary .summary-hero .live-dot {
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--green); box-shadow: 0 0 10px var(--green);
   animation: pulse 2s ease-in-out infinite;
 }
+/* Glowing dots on map */
+@keyframes mapDot { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:1;transform:scale(1.8)} }
+#section-summary .map-dots { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+#section-summary .map-dot {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 8px var(--accent);
+  animation: mapDot 3s ease-in-out infinite;
+}
+#section-summary .map-dot.purple { background: #b07aff; box-shadow: 0 0 8px #b07aff; }
+#section-summary .map-dot.green { background: #51cf66; box-shadow: 0 0 8px #51cf66; }
+#section-summary .map-dot.gold { background: #ffa94d; box-shadow: 0 0 8px #ffa94d; }
 .summary-kpi-strip {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
   border-top: 1px solid rgba(91,141,239,0.12);
@@ -960,6 +977,55 @@ function switchSection(sectionId, tabBtn) {
 <!-- ===== SECTION: SUMMARY ===== -->
 <div id="section-summary" class="section-panel active">
   <div class="summary-hero">
+    <!-- World Map SVG Background -->
+    <svg class="world-map-bg" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <g fill="none" stroke="#5b8def" stroke-width="1.2" opacity="0.7" filter="url(#glow)">
+        <!-- North America -->
+        <path d="M150,120 Q180,100 220,95 Q250,90 270,100 Q290,105 300,120 Q310,140 290,160 Q280,175 260,185 Q240,195 220,200 Q200,210 185,225 Q170,240 160,260 Q155,270 165,280 Q175,290 190,285 Q210,275 230,270 Q250,265 265,260 Q275,255 280,245 L290,235 Q300,220 315,210 Q325,205 330,215 Q335,230 325,245 Q315,260 300,270 Q285,280 265,290 Q245,300 225,305 Q205,310 185,305 Q170,300 160,285 Q150,270 145,255 Q140,240 135,225 Q130,210 125,195 Q120,180 125,165 Q130,150 140,135Z"/>
+        <!-- South America -->
+        <path d="M260,330 Q275,320 285,330 Q295,345 300,365 Q305,385 300,405 Q295,425 285,440 Q275,455 265,465 Q255,475 250,490 Q248,500 255,505 Q260,510 255,520 Q248,530 240,535 Q230,538 225,530 Q220,520 225,505 Q230,490 235,475 Q238,460 235,445 Q232,430 235,415 Q238,400 245,385 Q250,370 255,355 Q258,340 260,330Z"/>
+        <!-- Europe -->
+        <path d="M500,100 Q520,95 540,100 Q555,105 565,115 Q570,125 560,135 Q550,140 540,145 Q530,150 525,160 Q520,170 530,175 Q540,178 550,175 Q560,170 570,165 Q580,160 585,155 Q590,150 595,155 Q598,165 590,175 Q580,185 570,190 Q555,195 540,195 Q525,198 510,195 Q500,192 495,185 Q490,175 495,165 Q498,155 500,145 Q502,135 500,125 Q498,115 500,100Z"/>
+        <!-- Africa -->
+        <path d="M520,210 Q540,205 555,210 Q570,215 580,230 Q590,245 595,265 Q598,285 595,305 Q590,325 580,345 Q570,365 555,380 Q540,395 530,405 Q525,410 530,415 Q538,420 535,430 Q530,440 520,445 Q510,448 505,440 Q500,430 505,415 Q510,400 515,385 Q520,370 520,355 Q518,340 515,325 Q510,310 508,295 Q505,280 508,265 Q510,250 515,235 Q518,220 520,210Z"/>
+        <!-- Asia -->
+        <path d="M620,80 Q650,75 680,80 Q710,85 740,95 Q770,105 800,100 Q830,95 860,100 Q885,105 900,120 Q910,135 905,150 Q898,165 885,175 Q870,185 855,190 Q840,195 825,200 Q810,205 800,215 Q790,225 780,240 Q775,250 785,255 Q798,258 810,255 Q825,250 840,250 Q855,252 865,260 Q870,268 862,275 Q850,280 835,280 Q820,278 805,280 Q790,282 775,278 Q760,275 745,270 Q730,265 720,258 Q705,250 695,240 Q685,230 680,218 Q675,205 670,195 Q665,185 655,180 Q645,178 635,182 Q625,188 618,195 Q612,205 615,215 Q620,225 628,230 Q635,235 630,240 Q622,242 615,238 Q608,230 605,220 Q600,210 598,200 Q595,190 600,178 Q605,165 612,155 Q618,145 625,135 Q630,125 628,115 Q625,105 620,95Z"/>
+        <!-- China highlight -->
+        <path d="M780,140 Q800,130 820,135 Q840,140 855,150 Q865,160 860,175 Q852,188 840,195 Q825,200 810,200 Q795,198 785,190 Q778,180 780,168 Q782,155 780,140Z" stroke="#b07aff" stroke-width="1.8"/>
+        <!-- Australia -->
+        <path d="M850,380 Q875,370 900,375 Q920,380 935,390 Q945,400 940,415 Q932,428 918,435 Q905,440 890,438 Q875,435 862,425 Q852,415 850,400 Q848,390 850,380Z"/>
+        <!-- Japan -->
+        <path d="M895,145 Q900,135 908,140 Q912,150 908,160 Q902,168 895,165 Q890,158 895,145Z"/>
+        <!-- UK -->
+        <path d="M488,108 Q492,102 498,105 Q500,112 496,118 Q490,120 488,115Z"/>
+        <!-- Grid lines (latitude/longitude) -->
+        <line x1="0" y1="300" x2="1200" y2="300" stroke-dasharray="8,12" opacity="0.15"/>
+        <line x1="0" y1="150" x2="1200" y2="150" stroke-dasharray="8,12" opacity="0.15"/>
+        <line x1="0" y1="450" x2="1200" y2="450" stroke-dasharray="8,12" opacity="0.15"/>
+        <line x1="300" y1="0" x2="300" y2="600" stroke-dasharray="8,12" opacity="0.15"/>
+        <line x1="600" y1="0" x2="600" y2="600" stroke-dasharray="8,12" opacity="0.15"/>
+        <line x1="900" y1="0" x2="900" y2="600" stroke-dasharray="8,12" opacity="0.15"/>
+      </g>
+      <!-- Connection arcs (trade routes) -->
+      <g fill="none" stroke-width="0.8" opacity="0.25">
+        <path d="M260,200 Q450,100 540,160" stroke="#5b8def" stroke-dasharray="4,4"/>
+        <path d="M540,160 Q700,120 820,170" stroke="#b07aff" stroke-dasharray="4,4"/>
+        <path d="M260,200 Q550,250 820,170" stroke="#36d6b6" stroke-dasharray="4,4"/>
+        <path d="M820,170 Q860,300 890,400" stroke="#ffa94d" stroke-dasharray="4,4"/>
+      </g>
+    </svg>
+    <!-- Glowing city dots -->
+    <div class="map-dots">
+      <div class="map-dot" style="top:28%;left:18%;animation-delay:0s"></div>
+      <div class="map-dot purple" style="top:22%;left:45%;animation-delay:0.5s"></div>
+      <div class="map-dot" style="top:30%;left:68%;animation-delay:1s"></div>
+      <div class="map-dot green" style="top:25%;left:72%;animation-delay:1.5s"></div>
+      <div class="map-dot gold" style="top:60%;left:48%;animation-delay:2s"></div>
+      <div class="map-dot" style="top:70%;left:75%;animation-delay:0.8s"></div>
+      <div class="map-dot purple" style="top:45%;left:22%;animation-delay:1.2s"></div>
+      <div class="map-dot green" style="top:35%;left:55%;animation-delay:2.2s"></div>
+    </div>
     <h1>Jerome资源看板</h1>
     <div class="subtitle">
       <span class="live-dot"></span>
