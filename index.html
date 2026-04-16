@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jerome资源看板 - 多展会汇总平台</title>
+<title>Jerome资源看板</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="https://jeromelzw.github.io/supplier-dashboard/search_data_v2.js"></script>
 <style>
@@ -282,15 +282,22 @@
 /* ===== Toolbox Modal ===== */
 .tb-ov{position:fixed;inset:0;background:rgba(30,41,59,0.35);backdrop-filter:blur(3px);z-index:500;display:none;align-items:center;justify-content:center}
 .tb-ov.show{display:flex}
-.tb-win{width:96vw;max-width:580px;height:92vh;max-height:900px;background:#F7F5F0;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.tb-win{width:96vw;max-width:680px;height:92vh;max-height:900px;background:#F7F5F0;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
 .tb-hdr{padding:14px 20px;background:#fff;border-bottom:1px solid #E5E0D8;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .tb-hdr h2{font-size:17px;font-weight:800;color:#2B3A4A;margin:0}
 .tb-hdr h2 em{color:#E07628;font-style:normal}
 .tb-xb{width:36px;height:36px;border-radius:10px;border:1px solid #E5E0D8;background:#F7F5F0;color:#7B8B9A;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .tb-xb:hover{border-color:#E07628;color:#E07628;background:#FFF3EB}
+.tb-inner{display:flex;flex:1;overflow:hidden}
+.tb-sidebar{width:72px;flex-shrink:0;background:#fff;border-right:1px solid #E5E0D8;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tb-sidebar .sb-item{width:60px;padding:10px 4px;border:none;border-radius:12px;cursor:pointer;background:transparent;color:#7B8B9A;font-weight:600;font-size:10px;font-family:inherit;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;line-height:1.2}
+.tb-sidebar .sb-item .sb-icon{font-size:22px;display:block}
+.tb-sidebar .sb-item:hover{background:#FFF3EB;color:#E07628}
+.tb-sidebar .sb-item.active{background:#E07628;color:#fff;box-shadow:0 2px 8px rgba(224,118,40,0.3)}
 .tb-bd{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch;--bg:#F7F5F0;--card:#FFFFFF;--primary:#E07628;--primary-light:#FFF3EB;--accent:#2A8FC1;--accent-light:#EAF4FB;--green:#23A05B;--green-light:#E6F7EE;--red:#E04B4B;--red-light:#FDEBEB;--purple:#8E44C8;--purple-light:#F1E9FA;--gold:#D4A017;--gold-light:#FDF6E3;--text:#2B3A4A;--text2:#7B8B9A;--border:#E5E0D8;--shadow:0 2px 14px rgba(0,0,0,0.055);--shadow2:0 4px 24px rgba(0,0,0,0.09);--radius:16px;--font:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;--font2:'DM Sans','Noto Sans SC',sans-serif;font-family:var(--font);color:var(--text);background:#F7F5F0}
 .tb-bd .app{max-width:100%;margin:0}
 .tb-bd .title{display:none}
+@media(max-width:500px){.tb-sidebar{width:56px}.tb-sidebar .sb-item{width:48px;font-size:9px;padding:8px 2px}.tb-sidebar .sb-item .sb-icon{font-size:18px}}
 .tb-btn{width:40px;height:40px;border:1px solid var(--border-color);border-radius:10px;background:var(--bg-primary);color:#E07628;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .3s}
 .tb-btn:hover{border-color:#E07628;background:#FFF3EB;box-shadow:var(--shadow-sm)}
 
@@ -844,7 +851,7 @@ input[type=number] { -moz-appearance: textfield; }
   <div class="login-box">
     <div class="login-icon">&#x1f512;</div>
     <h2>Jerome资源看板</h2>
-    <p class="login-sub">多展会汇总平台 | 请输入账号密码访问</p>
+    <p class="login-sub">请输入账号密码访问</p>
     <div class="login-field">
       <label>账号</label>
       <span class="field-icon">&#x1f464;</span>
@@ -926,7 +933,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </button>
   </div>
   <div class="nav-tools">
-    <button class="tb-open-btn" id="tbBtn">&#x1f9f0; 工具箱</button>
+    <button class="tb-open-btn" id="tbBtn">&#x2b50; 小组件</button>
   </div>
 </nav>
 
@@ -953,7 +960,7 @@ function switchSection(sectionId, tabBtn) {
 <!-- ===== SECTION: SUMMARY ===== -->
 <div id="section-summary" class="section-panel active">
   <div class="summary-hero">
-    <h1>Jerome资源看板 · 多展会汇总平台</h1>
+    <h1>Jerome资源看板</h1>
     <div class="subtitle">
       <span class="live-dot"></span>
       整合 2 大展会数据源 | 共计 54,645 家供应商 | 全方位供应商资源管理
@@ -1707,7 +1714,7 @@ function el(tag, cls, html) {
 function renderTabs(){
   const c=_tb$('tabs'); c.innerHTML='';
   TABS.forEach(t=>{
-    const b=el('button','tab-btn'+(activeTab===t.id?' active':''),`<span class="icon">${t.icon}</span><span>${t.label}</span>`);
+    const b=el('button','sb-item'+(activeTab===t.id?' active':''),`<span class="sb-icon">${t.icon}</span>${t.label}`);
     b.onclick=()=>{activeTab=t.id;renderTabs();renderAll();};
     c.appendChild(b);
   });
@@ -11081,12 +11088,15 @@ function ieaeApplyFilters() {
 </script>
 
 <!-- TOOLBOX (body level, always accessible) -->
-<div class="tb-ov" id="tbOv"><div class="tb-win"><div class="tb-hdr"><h2>🧰 <em>万能</em>工具箱</h2><button class="tb-xb" id="tbXb">✕</button></div>
-<div class="tb-bd"><div class="app"><div class="tabs" id="_tbTabs"></div>
+<div class="tb-ov" id="tbOv"><div class="tb-win"><div class="tb-hdr"><h2>⭐ <em>小组件</em></h2><button class="tb-xb" id="tbXb">✕</button></div>
+<div class="tb-inner">
+<div class="tb-sidebar" id="_tbTabs"></div>
+<div class="tb-bd"><div class="app">
 <div id="_tbP-unit" class="panel hidden"></div><div id="_tbP-currency" class="panel hidden"></div>
 <div id="_tbP-calendar" class="panel hidden"></div><div id="_tbP-calc" class="panel hidden"></div>
 <div id="_tbP-bom" class="panel hidden"></div>
-<div id="_tbP-profit" class="panel hidden"></div></div></div></div></div>
+<div id="_tbP-profit" class="panel hidden"></div></div></div>
+</div></div></div>
 
 </div><!-- end dashboard-content -->
 
