@@ -1050,44 +1050,130 @@ function switchSection(sectionId, tabBtn) {
 <div id="section-summary" class="section-panel active">
   <!-- Full-screen world map background -->
   <div class="summary-hero" style="min-height:calc(100vh - 56px);padding:0;display:flex;flex-direction:column">
-    <!-- World Map SVG Background (full area, no obstruction) -->
-    <svg class="world-map-bg" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg" style="opacity:0.08">
-      <defs><filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-      <g fill="none" stroke="#5b8def" stroke-width="1.2" opacity="0.7" filter="url(#glow)">
-        <path d="M150,120 Q180,100 220,95 Q250,90 270,100 Q290,105 300,120 Q310,140 290,160 Q280,175 260,185 Q240,195 220,200 Q200,210 185,225 Q170,240 160,260 Q155,270 165,280 Q175,290 190,285 Q210,275 230,270 Q250,265 265,260 Q275,255 280,245 L290,235 Q300,220 315,210 Q325,205 330,215 Q335,230 325,245 Q315,260 300,270 Q285,280 265,290 Q245,300 225,305 Q205,310 185,305 Q170,300 160,285 Q150,270 145,255 Q140,240 135,225 Q130,210 125,195 Q120,180 125,165 Q130,150 140,135Z"/>
-        <path d="M260,330 Q275,320 285,330 Q295,345 300,365 Q305,385 300,405 Q295,425 285,440 Q275,455 265,465 Q255,475 250,490 Q248,500 255,505 Q260,510 255,520 Q248,530 240,535 Q230,538 225,530 Q220,520 225,505 Q230,490 235,475 Q238,460 235,445 Q232,430 235,415 Q238,400 245,385 Q250,370 255,355 Q258,340 260,330Z"/>
-        <path d="M500,100 Q520,95 540,100 Q555,105 565,115 Q570,125 560,135 Q550,140 540,145 Q530,150 525,160 Q520,170 530,175 Q540,178 550,175 Q560,170 570,165 Q580,160 585,155 Q590,150 595,155 Q598,165 590,175 Q580,185 570,190 Q555,195 540,195 Q525,198 510,195 Q500,192 495,185 Q490,175 495,165 Q498,155 500,145 Q502,135 500,125 Q498,115 500,100Z"/>
-        <path d="M520,210 Q540,205 555,210 Q570,215 580,230 Q590,245 595,265 Q598,285 595,305 Q590,325 580,345 Q570,365 555,380 Q540,395 530,405 Q525,410 530,415 Q538,420 535,430 Q530,440 520,445 Q510,448 505,440 Q500,430 505,415 Q510,400 515,385 Q520,370 520,355 Q518,340 515,325 Q510,310 508,295 Q505,280 508,265 Q510,250 515,235 Q518,220 520,210Z"/>
-        <path d="M620,80 Q650,75 680,80 Q710,85 740,95 Q770,105 800,100 Q830,95 860,100 Q885,105 900,120 Q910,135 905,150 Q898,165 885,175 Q870,185 855,190 Q840,195 825,200 Q810,205 800,215 Q790,225 780,240 Q775,250 785,255 Q798,258 810,255 Q825,250 840,250 Q855,252 865,260 Q870,268 862,275 Q850,280 835,280 Q820,278 805,280 Q790,282 775,278 Q760,275 745,270 Q730,265 720,258 Q705,250 695,240 Q685,230 680,218 Q675,205 670,195 Q665,185 655,180 Q645,178 635,182 Q625,188 618,195 Q612,205 615,215 Q620,225 628,230 Q635,235 630,240 Q622,242 615,238 Q608,230 605,220 Q600,210 598,200 Q595,190 600,178 Q605,165 612,155 Q618,145 625,135 Q630,125 628,115 Q625,105 620,95Z"/>
-        <path d="M780,140 Q800,130 820,135 Q840,140 855,150 Q865,160 860,175 Q852,188 840,195 Q825,200 810,200 Q795,198 785,190 Q778,180 780,168 Q782,155 780,140Z" stroke="#b07aff" stroke-width="1.8"/>
-        <path d="M850,380 Q875,370 900,375 Q920,380 935,390 Q945,400 940,415 Q932,428 918,435 Q905,440 890,438 Q875,435 862,425 Q852,415 850,400 Q848,390 850,380Z"/>
-        <path d="M895,145 Q900,135 908,140 Q912,150 908,160 Q902,168 895,165 Q890,158 895,145Z"/>
-        <path d="M488,108 Q492,102 498,105 Q500,112 496,118 Q490,120 488,115Z"/>
-        <line x1="0" y1="300" x2="1200" y2="300" stroke-dasharray="8,12" opacity="0.15"/>
-        <line x1="0" y1="150" x2="1200" y2="150" stroke-dasharray="8,12" opacity="0.15"/>
-        <line x1="0" y1="450" x2="1200" y2="450" stroke-dasharray="8,12" opacity="0.15"/>
-        <line x1="300" y1="0" x2="300" y2="600" stroke-dasharray="8,12" opacity="0.15"/>
-        <line x1="600" y1="0" x2="600" y2="600" stroke-dasharray="8,12" opacity="0.15"/>
-        <line x1="900" y1="0" x2="900" y2="600" stroke-dasharray="8,12" opacity="0.15"/>
+    <!-- China Map SVG Background -->
+    <svg class="world-map-bg" viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg" style="opacity:0.1">
+      <defs>
+        <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glow2"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- China outline (simplified) -->
+      <g fill="none" stroke="#5b8def" stroke-width="1.5" opacity="0.8" filter="url(#glow)">
+        <!-- Main border -->
+        <path d="M200,120 L240,100 L280,85 L330,80 L370,75 L420,80 L460,70 L500,60 L540,55 L580,65 L620,60 L660,70 L700,85 L740,95 L770,110 L790,130 L800,155 L810,180 L830,200 L850,220 L860,250 L855,280 L840,310 L830,340 L820,360 L810,380 L790,400 L775,420 L760,445 L750,470 L740,490 L725,510 L710,530 L700,550 L690,570 L675,585 L660,600 L640,610 L620,615 L600,620 L580,625 L560,630 L540,640 L520,650 L500,660 L480,665 L460,660 L440,650 L420,640 L400,625 L385,610 L370,590 L355,570 L340,555 L320,545 L300,540 L280,530 L260,515 L245,500 L235,480 L225,460 L215,440 L200,420 L190,400 L180,380 L170,360 L165,340 L160,320 L155,300 L150,280 L148,260 L150,240 L155,220 L165,200 L175,180 L185,160 L195,140 Z"/>
+        <!-- Inner provinces borders -->
+        <path d="M350,200 L400,190 L450,200 L500,210 L540,230" stroke-width="0.8" opacity="0.4"/>
+        <path d="M300,300 L380,280 L450,290 L520,300 L580,310" stroke-width="0.8" opacity="0.4"/>
+        <path d="M350,400 L430,380 L500,390 L570,400 L630,420" stroke-width="0.8" opacity="0.4"/>
+        <path d="M400,500 L470,480 L540,490 L600,510" stroke-width="0.8" opacity="0.4"/>
+        <path d="M500,200 L510,280 L520,350 L540,420 L560,500" stroke-width="0.8" opacity="0.4"/>
+        <path d="M620,150 L630,230 L640,310 L650,400 L660,480" stroke-width="0.8" opacity="0.4"/>
+        <!-- Xinjiang -->
+        <path d="M200,120 L230,140 L260,170 L280,200 L290,240 L295,280 L300,300" stroke-width="0.8" opacity="0.3"/>
+        <!-- Tibet -->
+        <path d="M200,300 L250,310 L300,330 L340,360 L370,390" stroke-width="0.8" opacity="0.3"/>
+        <!-- Taiwan -->
+        <path d="M790,460 Q800,445 810,450 Q815,465 810,480 Q800,490 790,485 Q785,475 790,460Z" stroke="#b07aff" stroke-width="1.2"/>
+        <!-- Hainan -->
+        <path d="M560,650 Q575,640 585,650 Q590,665 580,675 Q565,672 560,660Z" stroke="#36d6b6" stroke-width="1"/>
       </g>
-      <g fill="none" stroke-width="0.8" opacity="0.3">
-        <path d="M260,200 Q450,100 540,160" stroke="#5b8def" stroke-dasharray="4,4"/>
-        <path d="M540,160 Q700,120 820,170" stroke="#b07aff" stroke-dasharray="4,4"/>
-        <path d="M260,200 Q550,250 820,170" stroke="#36d6b6" stroke-dasharray="4,4"/>
-        <path d="M820,170 Q860,300 890,400" stroke="#ffa94d" stroke-dasharray="4,4"/>
+      <!-- 7 Industrial Belt regions (colored fills) -->
+      <g opacity="0.15">
+        <!-- 珠三角 Pearl River Delta -->
+        <ellipse cx="680" cy="560" rx="55" ry="35" fill="#5b8def" filter="url(#glow2)"/>
+        <!-- 长三角 Yangtze River Delta -->
+        <ellipse cx="730" cy="380" rx="50" ry="40" fill="#b07aff" filter="url(#glow2)"/>
+        <!-- 环渤海 Bohai Rim -->
+        <ellipse cx="680" cy="220" rx="60" ry="35" fill="#36d6b6" filter="url(#glow2)"/>
+        <!-- 海峡西岸 West Strait -->
+        <ellipse cx="730" cy="490" rx="35" ry="30" fill="#51cf66" filter="url(#glow2)"/>
+        <!-- 中部 Central -->
+        <ellipse cx="580" cy="400" rx="50" ry="50" fill="#ffa94d" filter="url(#glow2)"/>
+        <!-- 东北 Northeast -->
+        <ellipse cx="740" cy="130" rx="45" ry="50" fill="#ff6b6b" filter="url(#glow2)"/>
+        <!-- 西部 West -->
+        <ellipse cx="350" cy="350" rx="80" ry="70" fill="#f06595" filter="url(#glow2)"/>
+      </g>
+      <!-- Major cities -->
+      <g font-size="9" fill="#6b7db3" text-anchor="middle" opacity="0.5">
+        <text x="640" y="190">北京</text>
+        <text x="720" y="200">天津</text>
+        <text x="740" y="370">上海</text>
+        <text x="680" y="545">广州</text>
+        <text x="720" y="560">深圳</text>
+        <text x="420" y="340">成都</text>
+        <text x="510" y="330">武汉</text>
+        <text x="620" y="350">南京</text>
+        <text x="660" y="400">杭州</text>
+        <text x="550" y="400">长沙</text>
+        <text x="650" y="270">济南</text>
+        <text x="720" y="260">青岛</text>
+        <text x="720" y="130">沈阳</text>
+        <text x="760" y="100">长春</text>
+        <text x="780" y="75">哈尔滨</text>
+        <text x="580" y="520">昆明</text>
+        <text x="350" y="250">乌鲁木齐</text>
+        <text x="470" y="440">重庆</text>
+        <text x="500" y="280">西安</text>
+        <text x="580" y="280">郑州</text>
+        <text x="660" y="470">福州</text>
+        <text x="620" y="510">厦门</text>
+        <text x="600" y="620">海口</text>
+        <text x="800" y="465">台北</text>
+      </g>
+      <!-- City dots -->
+      <g fill="#5b8def" opacity="0.6">
+        <circle cx="640" cy="180" r="3"/><circle cx="720" cy="190" r="2.5"/>
+        <circle cx="740" cy="360" r="3"/><circle cx="680" cy="535" r="3"/>
+        <circle cx="720" cy="550" r="3"/><circle cx="420" cy="330" r="2.5"/>
+        <circle cx="510" cy="320" r="2.5"/><circle cx="620" cy="340" r="2.5"/>
+        <circle cx="660" cy="390" r="2.5"/><circle cx="550" cy="390" r="2"/>
+        <circle cx="650" cy="260" r="2.5"/><circle cx="720" cy="250" r="2"/>
+        <circle cx="720" cy="120" r="2.5"/><circle cx="760" cy="90" r="2"/>
+        <circle cx="780" cy="65" r="2"/><circle cx="470" cy="430" r="2.5"/>
+        <circle cx="500" cy="270" r="2.5"/><circle cx="580" cy="270" r="2"/>
+        <circle cx="660" cy="460" r="2"/><circle cx="620" cy="500" r="2"/>
+      </g>
+      <!-- Trade route connections -->
+      <g fill="none" stroke-width="0.8" opacity="0.25" stroke-dasharray="4,4">
+        <path d="M680,535 Q710,450 740,360" stroke="#5b8def"/>
+        <path d="M740,360 Q700,280 640,180" stroke="#b07aff"/>
+        <path d="M640,180 Q690,150 720,120" stroke="#ff6b6b"/>
+        <path d="M680,535 Q600,480 510,320" stroke="#36d6b6"/>
+        <path d="M510,320 Q450,340 420,330" stroke="#ffa94d"/>
+        <path d="M740,360 Q700,410 660,460" stroke="#51cf66"/>
+      </g>
+      <!-- Belt labels -->
+      <g font-size="10" font-weight="700" text-anchor="middle" opacity="0.35">
+        <text x="680" y="580" fill="#5b8def">珠三角</text>
+        <text x="740" y="400" fill="#b07aff">长三角</text>
+        <text x="680" y="240" fill="#36d6b6">环渤海</text>
+        <text x="730" y="510" fill="#51cf66">海峡西岸</text>
+        <text x="560" cy="420" y="420" fill="#ffa94d">中部</text>
+        <text x="740" y="155" fill="#ff6b6b">东北</text>
+        <text x="330" y="370" fill="#f06595">西部</text>
       </g>
     </svg>
+    <!-- Glowing city dots overlay -->
     <div class="map-dots">
-      <div class="map-dot" style="top:22%;left:15%;animation-delay:0s"></div>
-      <div class="map-dot purple" style="top:18%;left:42%;animation-delay:0.5s"></div>
-      <div class="map-dot" style="top:25%;left:65%;animation-delay:1s"></div>
-      <div class="map-dot green" style="top:20%;left:70%;animation-delay:1.5s"></div>
-      <div class="map-dot gold" style="top:55%;left:45%;animation-delay:2s"></div>
-      <div class="map-dot" style="top:65%;left:72%;animation-delay:0.8s"></div>
-      <div class="map-dot purple" style="top:40%;left:20%;animation-delay:1.2s"></div>
-      <div class="map-dot green" style="top:30%;left:52%;animation-delay:2.2s"></div>
-      <div class="map-dot gold" style="top:35%;left:80%;animation-delay:0.3s"></div>
-      <div class="map-dot" style="top:50%;left:30%;animation-delay:1.8s"></div>
+      <!-- 深圳/广州 (珠三角) -->
+      <div class="map-dot" style="top:68%;left:68%;animation-delay:0s"></div>
+      <div class="map-dot" style="top:66%;left:65%;animation-delay:1.5s"></div>
+      <!-- 上海 (长三角) -->
+      <div class="map-dot purple" style="top:46%;left:73%;animation-delay:0.5s"></div>
+      <!-- 杭州 -->
+      <div class="map-dot purple" style="top:50%;left:66%;animation-delay:2s"></div>
+      <!-- 北京 (环渤海) -->
+      <div class="map-dot green" style="top:22%;left:64%;animation-delay:1s"></div>
+      <!-- 青岛 -->
+      <div class="map-dot green" style="top:32%;left:72%;animation-delay:0.3s"></div>
+      <!-- 成都 (西部) -->
+      <div class="map-dot gold" style="top:42%;left:42%;animation-delay:1.8s"></div>
+      <!-- 武汉 (中部) -->
+      <div class="map-dot gold" style="top:40%;left:51%;animation-delay:2.2s"></div>
+      <!-- 沈阳 (东北) -->
+      <div class="map-dot" style="top:15%;left:72%;animation-delay:0.8s"></div>
+      <!-- 厦门 (海峡西岸) -->
+      <div class="map-dot green" style="top:62%;left:62%;animation-delay:1.2s"></div>
     </div>
 
     <!-- Top bar: title + upload button -->
