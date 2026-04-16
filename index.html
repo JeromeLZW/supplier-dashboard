@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jerome供应商看板 - 多展会汇总平台</title>
+<title>Jerome资源看板 - 多展会汇总平台</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="https://jeromelzw.github.io/supplier-dashboard/search_data_v2.js"></script>
 <style>
@@ -843,7 +843,7 @@ input[type=number] { -moz-appearance: textfield; }
 <div id="login-overlay">
   <div class="login-box">
     <div class="login-icon">&#x1f512;</div>
-    <h2>Jerome供应商看板</h2>
+    <h2>Jerome资源看板</h2>
     <p class="login-sub">多展会汇总平台 | 请输入账号密码访问</p>
     <div class="login-field">
       <label>账号</label>
@@ -913,7 +913,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="dashboard-content">
 <!-- ===== MAIN NAVIGATION ===== -->
 <nav class="main-nav">
-  <div class="nav-brand">Jerome供应商看板 <em>v2</em></div>
+  <div class="nav-brand">Jerome资源看板 <em>v2</em></div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="switchSection('summary', this)">
       汇总总览 <span class="tab-badge blue">ALL</span>
@@ -953,7 +953,7 @@ function switchSection(sectionId, tabBtn) {
 <!-- ===== SECTION: SUMMARY ===== -->
 <div id="section-summary" class="section-panel active">
   <div class="summary-hero">
-    <h1>Jerome供应商多展会汇总平台</h1>
+    <h1>Jerome资源看板 · 多展会汇总平台</h1>
     <div class="subtitle">
       <span class="live-dot"></span>
       整合 2 大展会数据源 | 共计 54,645 家供应商 | 全方位供应商资源管理
@@ -1444,6 +1444,7 @@ const TABS = [
   { id:'calendar', icon:'🗓️', label:'万年历' },
   { id:'calc', icon:'🔢', label:'计算器' },
   { id:'bom', icon:'📦', label:'BOM核算' },
+  { id:'profit', icon:'💹', label:'利润测算' },
 ];
 
 const UNIT_CATS = {
@@ -1694,7 +1695,7 @@ let calcDisplay = '0', calcPrev = null, calcOp = null, calcNewNum = true, calcHi
 (function initUnit(){const c=UNIT_CATS[unitCat];unitFrom=c.u[0];unitTo=c.u[1];})();
 
 // ====================== RENDER HELPERS ======================
-var _tb$ = (function(){var m={'tabs':'_tbTabs','panel-unit':'_tbP-unit','panel-currency':'_tbP-currency','panel-calendar':'_tbP-calendar','panel-calc':'_tbP-calc','panel-bom':'_tbP-bom'};return function(id){return document.getElementById(m[id]||id);}})();
+var _tb$ = (function(){var m={'tabs':'_tbTabs','panel-unit':'_tbP-unit','panel-currency':'_tbP-currency','panel-calendar':'_tbP-calendar','panel-calc':'_tbP-calc','panel-bom':'_tbP-bom','panel-profit':'_tbP-profit'};return function(id){return document.getElementById(m[id]||id);}})();
 function el(tag, cls, html) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
@@ -1713,7 +1714,7 @@ function renderTabs(){
 }
 
 function renderAll(){
-  ['unit','currency','calendar','calc','bom'].forEach(id=>{
+  ['unit','currency','calendar','calc','bom','profit'].forEach(id=>{
     _tb$('panel-'+id).classList.toggle('hidden', activeTab!==id);
   });
   if(activeTab==='unit') renderUnit();
@@ -1721,6 +1722,7 @@ function renderAll(){
   else if(activeTab==='calendar') renderCalendar();
   else if(activeTab==='calc') renderCalc();
   else if(activeTab==='bom') renderBom();
+  else if(activeTab==='profit') renderProfit();
 }
 
 // ====================== UNIT CONVERTER (Optimized Grid Style) ======================
@@ -3257,6 +3259,194 @@ function renderBom(){
 
 // Init BOM with one empty item
 bomItems=[bomNewItem()];
+
+// ====================== PROFIT CALCULATOR ======================
+var profitMode='reverse';
+var profitCalced=false;
+
+// WFS fee calculator
+function _wfsFee(L,W,H,kg){var r2=function(v){return Math.round(v*100)/100;};var M=r2(L/2.54),N=r2(W/2.54),O=r2(H/2.54);var P=r2(M*N*O/139+0.25),Q=r2(kg*2.20462+0.25);var b=Math.max(P,Q),C=Math.ceil(b);var R;if(b<=1)R=3.45;else if(b<=2)R=4.95;else if(b<=3)R=5.45;else if(b<=19)R=5.75+(C-4)*0.4;else if(b<=29)R=15.55+(C-21)*0.4;else if(b<=49)R=14.55+(C-31)*0.4;else R=17.55+(C-51)*0.4;var dims=[M,N,O].sort(function(a,b){return b-a;});var maxD=dims[0],midD=dims[1],minD=dims[2];var girth=maxD+2*(midD+minD);var maxPQ=Math.max(P,Q);var S;if(maxPQ<=150&&((maxD>=48&&maxD<96)||midD>30||(girth>=105&&girth<130)))S=R+3;else if((maxD>=96||girth>=130)&&girth<165)S=17.55+(Math.ceil(Math.max(90,P,Q))-51)*0.4+25+3;else if(maxPQ>150)S=17.55+(Math.ceil(Math.max(90,P,Q))-51)*0.4+25+3;else S=0;return Math.max(R,S);}
+
+// FBA fee calculator
+function _fbaFee(Lcm,Wcm,Hcm,kgU){var Lin=Lcm/2.54,Win=Wcm/2.54,Hin=Hcm/2.54;var dims=[Lin,Win,Hin].sort(function(a,b){return b-a;});var maxD=dims[0],midD=dims[1],minD=dims[2];var girth=maxD+2*(midD+minD);var ozU=kgU*35.274,lbU=kgU*2.20462;var dimWt=(Lin*Win*Hin)/139;var shipWt=Math.max(lbU,dimWt);var tier;if(maxD<=15&&midD<=12&&minD<=0.75&&lbU<=1)tier='small_std';else if(maxD<=18&&midD<=14&&minD<=8&&lbU<=20)tier='large_std';else if(maxD<=59&&girth<=130&&lbU<=50)tier='large_bulky';else if(lbU<=50)tier='extra_large_0_50';else if(lbU<=70)tier='extra_large_50_70';else if(lbU<=150)tier='extra_large_70_150';else tier='extra_large_150_plus';var fee=0;if(tier==='small_std'){if(ozU<=2)fee=3.06;else if(ozU<=4)fee=3.18;else if(ozU<=6)fee=3.30;else if(ozU<=8)fee=3.42;else if(ozU<=10)fee=3.54;else if(ozU<=12)fee=3.66;else if(ozU<=14)fee=3.78;else fee=3.90;}else if(tier==='large_std'){var sw=shipWt;if(sw<=0.25)fee=3.68;else if(sw<=0.5)fee=3.98;else if(sw<=0.75)fee=4.28;else if(sw<=1)fee=4.88;else if(sw<=1.25)fee=5.28;else if(sw<=1.5)fee=5.48;else if(sw<=1.75)fee=5.72;else if(sw<=2)fee=5.92;else if(sw<=2.25)fee=6.12;else if(sw<=2.5)fee=6.35;else if(sw<=2.75)fee=6.61;else if(sw<=3)fee=6.92;else fee=6.92+Math.ceil((sw-3)*2)*0.16;}else if(tier==='large_bulky'){fee=9.61+Math.max(0,Math.ceil(shipWt)-1)*0.38;}else if(tier==='extra_large_0_50'){fee=26.33+Math.max(0,Math.ceil(shipWt)-1)*0.38;}else if(tier==='extra_large_50_70'){fee=40.12+Math.max(0,Math.ceil(shipWt)-51)*0.75;}else if(tier==='extra_large_70_150'){fee=54.87+Math.max(0,Math.ceil(shipWt)-71)*0.75;}else{fee=100;}return{fee:fee,tier:tier,shipWt:Math.round(shipWt*100)/100};}
+
+var _AC_TABLE=[[1,7.15],[2,7.15],[3,7.15],[4,7.15],[5,7.15],[6,7.15],[7,7.15],[8,7.15],[9,7.15],[10,7.15],[11,7.15],[12,7.15],[13,7.15],[14,7.15],[15,7.15],[16,7.15],[17,7.15],[18,7.15],[19,7.15],[20,7.15],[21,7.15],[22,7.227],[23,7.359],[24,7.755],[25,7.898],[26,8.228],[27,8.36],[28,8.855],[29,8.855],[30,9.207],[31,9.13],[32,9.13],[33,9.559],[34,9.9],[35,10.131],[36,10.384],[37,10.615],[38,10.868],[39,11.209],[40,11.209],[41,11.605],[42,11.649],[43,12.243],[44,12.463],[45,12.463],[46,12.694],[47,12.793],[48,13.255],[49,13.255],[50,13.266],[51,13.607],[52,13.607],[53,13.75],[54,13.772],[55,13.772],[56,13.772],[57,14.19],[58,14.19],[59,14.201],[60,14.707],[61,14.74],[62,15.158],[63,15.158],[64,15.169],[65,15.169],[66,15.169],[67,15.202],[68,15.543],[69,15.653],[70,16.412],[71,16.412],[72,16.423],[73,16.665],[74,16.665],[75,16.797],[76,17.05],[77,17.127],[78,17.314],[79,17.589],[80,18.007],[81,18.128],[82,18.59],[83,18.59],[84,18.766],[85,19.074],[86,19.426],[87,19.437],[88,20.064],[89,20.13],[90,20.713],[91,20.724],[92,20.922],[93,20.922],[94,21.186],[95,21.483],[96,21.714],[97,22.066],[98,22.319],[99,22.605],[100,22.726],[101,22.946],[102,22.946],[103,23.078],[104,23.111],[105,23.804],[106,23.815],[107,24.068],[108,24.068],[109,24.53],[110,25.003],[111,25.245],[112,25.256],[113,25.487],[114,25.982],[115,26.301],[116,26.301],[117,26.653],[118,26.73],[119,27.137],[120,27.324],[121,27.324],[122,27.577],[123,28.325],[124,28.325],[125,28.325],[126,28.336],[127,28.974],[128,28.985],[129,29.183],[130,29.183],[131,29.656],[132,29.854],[133,29.854],[134,30.393],[135,30.932],[136,31.207],[137,31.427],[138,31.691],[139,31.691],[140,32.197],[141,32.197],[142,32.714],[143,32.714],[144,33.737],[145,33.737],[146,33.748],[147,34.089],[148,34.089],[149,34.617],[150,35.112]];
+var _PS_TABLE=[[0,1,2],[5,1,2],[5.01,1,2.5],[11,1,2.5],[11.01,1.8,3.5],[22,1.8,3.5],[22.01,2.5,4.5],[44,2.5,4.5],[44.01,3,5],[66,3,5],[66.01,3.5,5.5],[88,3.5,5.5],[88.01,4,6],[110,4,6],[110.01,5,7.5],[150,5,7.5]];
+function _vlE(key,table){for(var i=0;i<table.length;i++)if(table[i][0]===key)return table[i][1];return 0;}
+function _vlA(key,tbl,col){var res=tbl[0][col];for(var i=0;i<tbl.length;i++)if(tbl[i][0]<=key)res=tbl[i][col];else break;return res;}
+
+var _PLATS=[
+  {name:'DSV',order:'自提',ship:'海外仓自提',type:'pickup',BP:0.03,BQ:0.077,BR:0.09,BS:0.0225,H:1.3,defaultHead:'fcl',noReturn:false},
+  {name:'沃尔玛 MP',order:'WFS',ship:'平台仓发',type:'wfs',BP:0.15,BQ:0.08,BR:0.09,BS:0.0225,H:1.0,defaultHead:'both',noReturn:false},
+  {name:'Target',order:'一件代发',ship:'美国发货',type:'dropship',BP:0.17,BQ:0.15,BR:0.05,BS:0.0225,H:1.0,defaultHead:'fcl',noReturn:true},
+  {name:'Macy',order:'一件代发',ship:'美国发货',type:'dropship',BP:0.18,BQ:0.10,BR:0.025,BS:0.0225,H:1.0,defaultHead:'fcl',noReturn:false},
+  {name:'Best Buy',order:'一件代发',ship:'美国发货',type:'dropship',BP:0.15,BQ:0.10,BR:0,BS:0.0225,H:1.0,defaultHead:'fcl',noReturn:false},
+  {name:'Lowes',order:'一件代发',ship:'美国发货',type:'dropship',BP:0.15,BQ:0.10,BR:0,BS:0.0225,H:1.0,defaultHead:'fcl',noReturn:true},
+  {name:'HD',order:'自提',ship:'海外仓自提',type:'pickup',BP:0.02,BQ:0.12,BR:0,BS:0.0225,H:1.55,defaultHead:'fcl',noReturn:false},
+  {name:'Overstock',order:'自提',ship:'海外仓自提',type:'pickup',BP:0.14,BQ:0.10,BR:0,BS:0.0225,H:1.55,defaultHead:'fcl',noReturn:false},
+  {name:'Amazon 北美',order:'FBA',ship:'平台仓发',type:'fba',BP:0.15,BQ:0.08,BR:0.10,BS:0.0225,H:1.0,defaultHead:'bulk',noReturn:false}
+];
+
+function renderProfit(){
+  var p=_tb$('panel-profit');
+  var _id=function(id){return document.getElementById(id);};
+
+  // Build form HTML
+  var html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><span style="font-size:22px">💹</span><div><div style="font-size:14px;font-weight:700;color:var(--text)">多平台利润测算</div><div style="font-size:11px;color:var(--text2)">输入产品参数，自动计算9大平台利润率</div></div></div>';
+
+  // Mode tabs
+  html+='<div style="display:flex;gap:0;margin-bottom:12px;border-radius:8px;overflow:hidden;border:1px solid var(--border)">';
+  html+='<div id="pf-tab-r" style="flex:1;padding:8px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;'+(profitMode==='reverse'?'background:var(--primary);color:#fff':'background:var(--bg);color:var(--text2)')+'" onclick="profitMode=\'reverse\';renderProfit()">反推定价</div>';
+  html+='<div id="pf-tab-f" style="flex:1;padding:8px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;'+(profitMode==='forward'?'background:var(--primary);color:#fff':'background:var(--bg);color:var(--text2)')+'" onclick="profitMode=\'forward\';renderProfit()">正推利润</div>';
+  html+='</div>';
+
+  // Input card
+  html+='<div class="card" style="padding:14px;margin-bottom:10px">';
+  html+='<div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">产品参数</div>';
+
+  html+='<div class="bom-label">外箱尺寸 (CM) 长×宽×高</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px"><input class="bom-inp" id="pf-bl" type="number" value="54.8" step="0.1"><input class="bom-inp" id="pf-bw" type="number" value="39.2" step="0.1"><input class="bom-inp" id="pf-bh" type="number" value="34" step="0.1"></div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">';
+  html+='<div><div class="bom-label">外箱毛重(KG)</div><input class="bom-inp full" id="pf-gw" type="number" value="17.2" step="0.1"></div>';
+  html+='<div><div class="bom-label">装箱量(PCS)</div><input class="bom-inp full" id="pf-qty" type="number" value="20" step="1"></div>';
+  html+='</div>';
+
+  html+='<div class="bom-label">内盒毛重(KG) / 尺寸 长×宽×高(CM)</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:6px"><input class="bom-inp" id="pf-igw" type="number" value="0.817" step="0.001"><input class="bom-inp" id="pf-il" type="number" value="37.5" step="0.1"><input class="bom-inp" id="pf-iw" type="number" value="28.5" step="0.1"><input class="bom-inp" id="pf-ih" type="number" value="3" step="0.1"></div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">';
+  html+='<div><div class="bom-label">不含税采购价(RMB)</div><input class="bom-inp full" id="pf-cost" type="number" value="46.5" step="0.01"></div>';
+  html+='<div><div class="bom-label">参考定价(USD)</div><input class="bom-inp full" id="pf-ref" type="number" value="44.99" step="0.01"></div>';
+  html+='</div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">';
+  html+='<div><div class="bom-label">整柜报价(RMB/柜)</div><input class="bom-inp full" id="pf-fcl" type="number" value="40000" step="100"></div>';
+  html+='<div><div class="bom-label">散货报价(RMB/KG)</div><input class="bom-inp full" id="pf-bulk" type="number" value="12" step="0.1"></div>';
+  html+='<div><div class="bom-label">汇率</div><input class="bom-inp full" id="pf-rate" type="number" value="6.6043" step="0.0001"></div>';
+  html+='</div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">';
+  html+='<div><div class="bom-label">材质</div><select class="bom-inp full" id="pf-mat" style="padding:7px 8px"><option value="non" selected>非钢铁铝 (45.47%)</option><option value="steel">钢铁铝 (85.47%)</option></select></div>';
+  html+='<div><div class="bom-label">目标利润率</div><select class="bom-inp full" id="pf-margin" style="padding:7px 8px"><option value="0.10">10%</option><option value="0.12">12%</option><option value="0.15" selected>15%</option><option value="0.18">18%</option><option value="0.20">20%</option><option value="0.25">25%</option></select></div>';
+  html+='</div>';
+
+  html+='<button class="bom-btn primary" style="width:100%;padding:10px;font-size:13px;border-radius:8px" onclick="calcProfit()">计 算</button>';
+  html+='</div>';
+
+  // KPI area
+  html+='<div id="pf-kpi"></div>';
+
+  // Results table
+  html+='<div id="pf-results"></div>';
+
+  p.innerHTML=html;
+}
+
+function calcProfit(){
+  var _id=function(id){return document.getElementById(id);};
+  var bL=+_id('pf-bl').value,bW=+_id('pf-bw').value,bH=+_id('pf-bh').value;
+  var box_gw=+_id('pf-gw').value,qty=+_id('pf-qty').value;
+  var in_gw=+_id('pf-igw').value,iL=+_id('pf-il').value,iW=+_id('pf-iw').value,iH=+_id('pf-ih').value;
+  var U=+_id('pf-cost').value,refPrice=+_id('pf-ref').value;
+  var I=+_id('pf-rate').value,m=+_id('pf-margin').value;
+  var mat=_id('pf-mat').value;
+  var FCL_RMB=+_id('pf-fcl').value,BULK_RATE=+_id('pf-bulk').value;
+  var TARIFF=mat==='steel'?0.8547:0.4547;
+
+  var AB=(bL*bW*bH)/1e6;
+  var billKg=Math.max(Math.ceil(AB*167),Math.ceil(box_gw));
+  var clearPrice=Math.min(8000*I/66*AB/qty,U*0.48);
+  var AF_fcl=FCL_RMB/66*AB/qty+clearPrice*TARIFF;
+  var AD_bulk=billKg*BULK_RATE/qty;
+
+  var ru=function(v){return Math.ceil(v);};
+  var AG=ru(iL*0.393700787),AH=ru(iW*0.393700787),AI=ru(iH*0.393700787);
+  var AJ=ru(AG*AH*AI/250),AK=ru(in_gw*2.20462262);
+  var AL=Math.max(AJ,AK);
+  var AN=Math.max(AG,AH,AI);
+  var arr=[AG,AH,AI].sort(function(a,b){return a-b;});var AO=arr[1];var minDim=arr[0];
+  var AP=AN+2*(AO+minDim),AQ=AN*AO*minDim;
+  var isOverlong=(AN>47||AO>29||AP>104||AQ>10360);
+  var isOverweight=(AK>48);
+  var isOversize=(AN>95||AP>129||AQ>17270||AK>108);
+  var AW=isOverlong?'超长':'',AX=isOverweight?'超重':'',AY=isOversize?'Oversize':'';
+  var AM=AL;
+  if(AY==='Oversize')AM=Math.max(AL,90);else if(AW==='超长')AM=Math.max(AL,40);
+
+  var wfs=_wfsFee(iL,iW,iH,in_gw);
+  var fba=_fbaFee(iL,iW,iH,in_gw);
+  var FBA_TIER={'small_std':'小号标准','large_std':'大号标准','large_bulky':'大件','extra_large_0_50':'超大(≤50lb)','extra_large_50_70':'超大(50-70)','extra_large_70_150':'超大(70-150)','extra_large_150_plus':'超大(>150lb)'};
+  var sizeLabel=AY||AW||AX||'标准';
+
+  // KPI
+  var khtml='<div class="card" style="padding:12px;margin-bottom:10px">';
+  khtml+='<div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">关键指标</div>';
+  khtml+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">外箱CBM</div><div style="font-size:14px;font-weight:700;color:var(--primary)">'+AB.toFixed(4)+'</div></div>';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">计费重KG</div><div style="font-size:14px;font-weight:700;color:var(--primary)">'+billKg+'</div></div>';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">WFS尾程</div><div style="font-size:14px;font-weight:700;color:var(--gold)">$'+wfs.toFixed(2)+'</div></div>';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">FBA尾程</div><div style="font-size:14px;font-weight:700;color:var(--gold)">$'+fba.fee.toFixed(2)+'</div></div>';
+  khtml+='</div>';
+  khtml+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">整柜头程/件</div><div style="font-size:13px;font-weight:700;color:var(--accent)">¥'+AF_fcl.toFixed(2)+'</div></div>';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">散货头程/件</div><div style="font-size:13px;font-weight:700;color:var(--accent)">¥'+AD_bulk.toFixed(2)+'</div></div>';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">FBA分级</div><div style="font-size:12px;font-weight:700;color:var(--accent)">'+(FBA_TIER[fba.tier]||fba.tier)+'</div></div>';
+  khtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center"><div style="font-size:10px;color:var(--text2)">尺寸标记</div><div style="font-size:13px;font-weight:700;color:'+(sizeLabel==='标准'?'var(--green)':'var(--gold)')+'">'+sizeLabel+'</div></div>';
+  khtml+='</div></div>';
+  document.getElementById('pf-kpi').innerHTML=khtml;
+
+  // Results table
+  var isReverse=profitMode==='reverse';
+  var rhtml='<div class="card" style="padding:12px"><div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">各平台'+(isReverse?'参考定价':'利润率')+'</div>';
+  rhtml+='<div style="overflow-x:auto"><table class="bom-table"><thead><tr><th>平台</th><th>头程</th>';
+  if(isReverse)rhtml+='<th>参考定价</th>';
+  else rhtml+='<th>成本</th><th>利润</th><th>利润率</th>';
+  rhtml+='</tr></thead><tbody>';
+
+  _PLATS.forEach(function(pl){
+    var headModes=[];
+    if(pl.defaultHead==='fcl'||pl.defaultHead==='both')headModes.push('fcl');
+    if(pl.defaultHead==='bulk'||pl.defaultHead==='both')headModes.push('bulk');
+    headModes.forEach(function(hm){
+      var BZ=hm==='bulk'?AD_bulk:AF_fcl;
+      var headUsd=(U+BZ)/I;
+      var CF=0,CE=0,BO=0;
+      if(pl.type==='wfs'){CF=wfs;BO=CF*pl.BQ;}
+      else if(pl.type==='dropship'){var AZ=_vlE(Math.min(AM,150),_AC_TABLE);var BA=AW==='超长'?4.8:0;var BB=AY==='Oversize'?45:0;var BC=AX==='超重'?7:0;var BD=Math.max(BA,BB,BC);var BE=3;var BF=5.5*0.3;var BG=0.205;var BI=0;var BJ=AY==='Oversize'?50:((AW==='超长'||AX==='超重')?5:0);var BH=(AZ+BD+BE+BF+BI+BJ)*BG;var BL=_vlA(AL,_PS_TABLE,1);CF=AZ+BD+BE+BF+BH+BI+BJ+BL;BO=pl.noReturn?0:CF*pl.BQ;}
+      else if(pl.type==='pickup'){CE=_vlA(AL,_PS_TABLE,2);}
+      else if(pl.type==='fba'){CF=fba.fee;BO=CF*pl.BQ;}
+
+      var headBadge=hm==='fcl'?'<span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(56,189,248,.15);color:var(--accent)">整柜</span>':'<span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(249,115,22,.15);color:#f97316">散货</span>';
+
+      var cells='';
+      if(isReverse){
+        var fixed=headUsd+CE+CF+BO;
+        var denom=(1-pl.BP)*(1-pl.BQ)/pl.H-m-pl.BR-pl.BS;
+        var V=denom>0?fixed/denom:NaN;
+        cells='<td style="font-weight:700;color:var(--green);font-size:14px">'+(isNaN(V)||V<=0?'—':'$'+V.toFixed(2))+'</td>';
+      }else{
+        var V2=refPrice,X=V2/pl.H;
+        var returnCost=X*pl.BQ;
+        var returnShip=0;
+        if(!pl.noReturn){if(pl.type==='wfs')returnShip=wfs*pl.BQ;else if(pl.type==='dropship')returnShip=CF*pl.BQ;else if(pl.type==='fba')returnShip=fba.fee*pl.BQ;}
+        var commission;
+        if(pl.name==='DSV')commission=(X-returnCost-V2*pl.BR)*pl.BP;else commission=(X-returnCost)*pl.BP;
+        var ad=V2*pl.BR,rent=V2*pl.BS;
+        var deliveryFee=0;
+        if(pl.type==='wfs')deliveryFee=wfs;else if(pl.type==='dropship')deliveryFee=CF;else if(pl.type==='fba')deliveryFee=fba.fee;
+        var totalCost=headUsd+returnCost+returnShip+commission+ad+CE+deliveryFee+rent;
+        var profit=X-totalCost;
+        var profitRate=profit/V2;
+        var pColor=profitRate<0?'var(--red)':profitRate<0.12?'var(--gold)':'var(--green)';
+        cells='<td>$'+totalCost.toFixed(2)+'</td><td style="font-weight:700;color:'+pColor+'">$'+profit.toFixed(2)+'</td><td style="font-weight:700;color:'+pColor+'">'+(profitRate*100).toFixed(1)+'%</td>';
+      }
+      rhtml+='<tr><td style="font-weight:600">'+pl.name+'</td><td>'+headBadge+'</td>'+cells+'</tr>';
+    });
+  });
+  rhtml+='</tbody></table></div></div>';
+  document.getElementById('pf-results').innerHTML=rhtml;
+}
 
 // ====================== INIT (called by toggle) ======================
 
@@ -10895,7 +11085,8 @@ function ieaeApplyFilters() {
 <div class="tb-bd"><div class="app"><div class="tabs" id="_tbTabs"></div>
 <div id="_tbP-unit" class="panel hidden"></div><div id="_tbP-currency" class="panel hidden"></div>
 <div id="_tbP-calendar" class="panel hidden"></div><div id="_tbP-calc" class="panel hidden"></div>
-<div id="_tbP-bom" class="panel hidden"></div></div></div></div></div>
+<div id="_tbP-bom" class="panel hidden"></div>
+<div id="_tbP-profit" class="panel hidden"></div></div></div></div></div>
 
 </div><!-- end dashboard-content -->
 
