@@ -747,22 +747,94 @@ input[type=number] { -moz-appearance: textfield; }
 .summary-kpi-item .skv.gold { background: linear-gradient(135deg, #ffa94d, #ffd43b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .summary-kpi-item .skv.green { background: linear-gradient(135deg, #51cf66, #69db7c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .summary-kpi-item .skl { font-size: 12px; color: var(--text-dim); margin-top: 6px; letter-spacing: 1px; }
-.summary-cards {
-  max-width: 1800px; margin: 0 auto; padding: 40px 48px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+/* ===== Homepage Split Layout ===== */
+.home-layout {
+  max-width: 1800px; margin: 0 auto; padding: 28px 48px 48px;
+  display: grid; grid-template-columns: 280px 1fr; gap: 24px;
 }
-.summary-expo-card {
+.home-sidebar {
+  display: flex; flex-direction: column; gap: 12px; position: sticky; top: 70px; align-self: start;
+}
+.home-sidebar .sidebar-section {
   background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 32px; cursor: pointer; transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  padding: 16px; overflow: hidden;
 }
-.summary-expo-card:hover {
-  border-color: rgba(91,141,239,0.25); transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+.home-sidebar .sidebar-title {
+  font-size: 12px; font-weight: 700; color: var(--text-dim); letter-spacing: 1px;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
 }
-.summary-expo-card .expo-icon { font-size: 48px; margin-bottom: 16px; }
-.summary-expo-card h2 { font-size: 22px; font-weight: 800; color: var(--text-bright); margin-bottom: 8px; }
-.summary-expo-card .expo-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; }
-.summary-expo-card .expo-stats { display: flex; gap: 12px; flex-wrap: wrap; }
+.home-sidebar .sidebar-title::before {
+  content: ''; width: 3px; height: 12px; border-radius: 2px; background: var(--accent);
+}
+.home-nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;
+  cursor: pointer; transition: all 0.25s; border: 1px solid transparent; margin-bottom: 6px;
+  background: transparent;
+}
+.home-nav-item:hover { background: rgba(91,141,239,0.06); border-color: rgba(91,141,239,0.12); }
+.home-nav-item.active { background: rgba(91,141,239,0.1); border-color: rgba(91,141,239,0.25); }
+.home-nav-item .nav-icon {
+  width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.home-nav-item .nav-icon.blue { background: rgba(91,141,239,0.12); }
+.home-nav-item .nav-icon.purple { background: rgba(176,122,255,0.12); }
+.home-nav-item .nav-label { font-size: 13px; font-weight: 700; color: var(--text-bright); line-height: 1.3; }
+.home-nav-item .nav-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.home-nav-item .nav-badge {
+  margin-left: auto; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+}
+.home-nav-item .nav-badge.blue { background: rgba(91,141,239,0.12); color: var(--accent); }
+.home-nav-item .nav-badge.purple { background: rgba(176,122,255,0.12); color: #b07aff; }
+
+/* Belt filter buttons */
+.belt-filter-list { display: flex; flex-direction: column; gap: 4px; }
+.belt-filter-btn {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px;
+  cursor: pointer; transition: all 0.2s; border: 1px solid transparent; font-size: 12px;
+  color: var(--text); background: transparent; font-family: inherit; text-align: left; width: 100%;
+}
+.belt-filter-btn:hover { background: rgba(91,141,239,0.05); border-color: rgba(91,141,239,0.1); }
+.belt-filter-btn.active { border-color: var(--accent); background: rgba(91,141,239,0.08); color: var(--text-bright); font-weight: 700; }
+.belt-filter-btn .bf-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.belt-filter-btn .bf-count { margin-left: auto; font-size: 11px; color: var(--text-dim); font-weight: 600; }
+
+/* Right content area */
+.home-content { display: flex; flex-direction: column; gap: 20px; }
+.home-detail-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px; transition: all 0.3s; cursor: pointer;
+}
+.home-detail-card:hover { border-color: rgba(91,141,239,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+.home-detail-card .detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.home-detail-card .detail-icon { font-size: 28px; }
+.home-detail-card .detail-title { font-size: 18px; font-weight: 800; color: var(--text-bright); }
+.home-detail-card .detail-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.home-detail-card .detail-stats {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 12px;
+}
+.home-detail-card .stat-box {
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 10px; padding: 12px; text-align: center;
+}
+.home-detail-card .stat-box .sv { font-size: 20px; font-weight: 800; }
+.home-detail-card .stat-box .sl { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+.home-detail-card .detail-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-top: 12px; }
+.home-enter-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 8px 20px;
+  border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.25s;
+  border: none; font-family: inherit;
+}
+.home-enter-btn.blue { background: rgba(91,141,239,0.12); color: var(--accent); }
+.home-enter-btn.purple { background: rgba(176,122,255,0.12); color: #b07aff; }
+.home-enter-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+
+@media (max-width: 1000px) {
+  .home-layout { grid-template-columns: 1fr; padding: 20px; }
+  .home-sidebar { position: static; flex-direction: row; flex-wrap: wrap; }
+  .home-sidebar .sidebar-section { flex: 1; min-width: 250px; }
+}
+
 .summary-expo-card .expo-stat {
   padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
 }
@@ -1038,37 +1110,206 @@ function switchSection(sectionId, tabBtn) {
     <div class="summary-kpi-item"><div class="skv gold">7+21</div><div class="skl">产业带 + 展会类目</div></div>
     <div class="summary-kpi-item"><div class="skv green">62+4</div><div class="skl">省份地区 + 展馆</div></div>
   </div>
-  <div class="summary-cards">
-    <div class="summary-expo-card canton" onclick="switchSection('canton', document.querySelectorAll('.nav-tab')[1])">
-      <div class="expo-icon">&#x1f3ed;</div>
-      <h2>分区1：广交会供应商数据</h2>
-      <div class="expo-desc">
-        中国进出口商品交易会（广交会）供应商产业带汇总数据。覆盖珠三角、长三角、环渤海等七大产业带，
-        涵盖生产企业、外贸企业、工贸企业等多种类型，提供完整的供应商联系方式和产品信息。
+  <div class="home-layout">
+    <!-- LEFT SIDEBAR -->
+    <div class="home-sidebar">
+      <!-- Section Navigation -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">数据分区</div>
+        <div class="home-nav-item active" onclick="showHomeDetail('canton')">
+          <div class="nav-icon blue">&#x1f3ed;</div>
+          <div><div class="nav-label">广交会供应商</div><div class="nav-sub">54,022 家 · 7大产业带</div></div>
+          <span class="nav-badge blue">分区1</span>
+        </div>
+        <div class="home-nav-item" onclick="showHomeDetail('ieae')">
+          <div class="nav-icon purple">&#x1f4f1;</div>
+          <div><div class="nav-label">IEAE供应商</div><div class="nav-sub">623 家 · 21个类目</div></div>
+          <span class="nav-badge purple">分区2</span>
+        </div>
       </div>
-      <div class="expo-stats">
-        <span class="expo-stat">54,022 家供应商</span>
-        <span class="expo-stat">7 大产业带</span>
-        <span class="expo-stat">62 省份/地区</span>
-        <span class="expo-stat">98.5% 邮箱覆盖</span>
+
+      <!-- Belt Filters (Canton Fair) -->
+      <div class="sidebar-section" id="home-belt-filters">
+        <div class="sidebar-title">产业带筛选</div>
+        <div class="belt-filter-list">
+          <button class="belt-filter-btn active" onclick="filterHomeBelt('all',this)">
+            <span class="bf-dot" style="background:var(--accent)"></span> 全部产业带
+            <span class="bf-count">54,022</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeBelt('珠三角',this)">
+            <span class="bf-dot" style="background:#5b8def"></span> 珠三角产业带
+            <span class="bf-count">9,996</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeBelt('长三角',this)">
+            <span class="bf-dot" style="background:#b07aff"></span> 长三角产业带
+            <span class="bf-count">17,157</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeBelt('环渤海',this)">
+            <span class="bf-dot" style="background:#36d6b6"></span> 环渤海产业带
+            <span class="bf-count">8,306</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeBelt('海峡西岸',this)">
+            <span class="bf-dot" style="background:#51cf66"></span> 海峡西岸产业带
+            <span class="bf-count">3,440</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeBelt('中部崛起',this)">
+            <span class="bf-dot" style="background:#ffa94d"></span> 中部崛起产业带
+            <span class="bf-count">6,187</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeBelt('东北振兴',this)">
+            <span class="bf-dot" style="background:#ff6b6b"></span> 东北振兴产业带
+            <span class="bf-count">1,815</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeBelt('西部开放',this)">
+            <span class="bf-dot" style="background:#f06595"></span> 西部开放产业带
+            <span class="bf-count">5,624</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- IEAE Hall Filters (hidden by default) -->
+      <div class="sidebar-section" id="home-ieae-filters" style="display:none">
+        <div class="sidebar-title">展馆筛选</div>
+        <div class="belt-filter-list">
+          <button class="belt-filter-btn active" onclick="filterHomeHall('all',this)">
+            <span class="bf-dot" style="background:#b07aff"></span> 全部展馆
+            <span class="bf-count">623</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeHall('6',this)">
+            <span class="bf-dot" style="background:#5b8def"></span> 6号馆
+            <span class="bf-count">131</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeHall('7',this)">
+            <span class="bf-dot" style="background:#36d6b6"></span> 7号馆
+            <span class="bf-count">114</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeHall('8',this)">
+            <span class="bf-dot" style="background:#ffa94d"></span> 8号馆
+            <span class="bf-count">136</span>
+          </button>
+          <button class="belt-filter-btn" onclick="filterHomeHall('9',this)">
+            <span class="bf-dot" style="background:#f06595"></span> 9号馆
+            <span class="bf-count">242</span>
+          </button>
+        </div>
       </div>
     </div>
-    <div class="summary-expo-card ieae" onclick="switchSection('ieae', document.querySelectorAll('.nav-tab')[2])">
-      <div class="expo-icon">&#x1f4f1;</div>
-      <h2>分区2：IEAE供应商数据</h2>
-      <div class="expo-desc">
-        IEAE 2026 深圳国际消费类电子及家用电器展。2026年3月30日-4月1日在深圳福田会展中心举办，
-        覆盖6/7/8/9号四个展馆，涵盖音频游戏、个人护理、智能家居、厨房电器等21个类目。
+
+    <!-- RIGHT CONTENT -->
+    <div class="home-content" id="home-content">
+      <!-- Canton Fair Detail (default) -->
+      <div class="home-detail-card" id="home-detail-canton">
+        <div class="detail-header">
+          <span class="detail-icon">&#x1f3ed;</span>
+          <div>
+            <div class="detail-title">广交会供应商数据</div>
+            <div class="detail-sub">中国进出口商品交易会 · 产业带供应商汇总</div>
+          </div>
+        </div>
+        <div class="detail-stats" id="home-canton-stats">
+          <div class="stat-box"><div class="sv" style="color:var(--accent)">54,022</div><div class="sl">供应商总数</div></div>
+          <div class="stat-box"><div class="sv" style="color:#b07aff">7</div><div class="sl">产业带</div></div>
+          <div class="stat-box"><div class="sv" style="color:#ffa94d">62</div><div class="sl">省份/地区</div></div>
+          <div class="stat-box"><div class="sv" style="color:#51cf66">98.5%</div><div class="sl">邮箱覆盖</div></div>
+        </div>
+        <div class="detail-desc" id="home-canton-desc">覆盖珠三角、长三角、环渤海、海峡西岸、中部崛起、东北振兴、西部开放七大产业带，涵盖生产企业、外贸企业、工贸企业等多种类型，提供完整的供应商联系方式和产品信息。</div>
+        <button class="home-enter-btn blue" onclick="switchSection('canton', document.querySelectorAll('.nav-tab')[1])">进入分区 &#x2192;</button>
       </div>
-      <div class="expo-stats">
-        <span class="expo-stat">623 家供应商</span>
-        <span class="expo-stat">21 个类目</span>
-        <span class="expo-stat">4 个展馆</span>
-        <span class="expo-stat">深圳福田会展中心</span>
+
+      <!-- Belt detail cards (shown when filtering) -->
+      <div id="home-belt-cards"></div>
+
+      <!-- IEAE Detail (hidden by default) -->
+      <div class="home-detail-card" id="home-detail-ieae" style="display:none">
+        <div class="detail-header">
+          <span class="detail-icon">&#x1f4f1;</span>
+          <div>
+            <div class="detail-title">IEAE 2026 供应商数据</div>
+            <div class="detail-sub">深圳国际消费类电子及家用电器展 · 2026.3.30-4.1</div>
+          </div>
+        </div>
+        <div class="detail-stats">
+          <div class="stat-box"><div class="sv" style="color:#b07aff">623</div><div class="sl">供应商</div></div>
+          <div class="stat-box"><div class="sv" style="color:var(--accent)">21</div><div class="sl">类目</div></div>
+          <div class="stat-box"><div class="sv" style="color:#ffa94d">4</div><div class="sl">展馆</div></div>
+          <div class="stat-box"><div class="sv" style="color:#51cf66">深圳</div><div class="sl">福田会展中心</div></div>
+        </div>
+        <div class="detail-desc">覆盖6/7/8/9号四个展馆，涵盖音频游戏、个人护理、智能家居、厨房电器、充电电源、清洁电器等21个类目。</div>
+        <button class="home-enter-btn purple" onclick="switchSection('ieae', document.querySelectorAll('.nav-tab')[2])">进入分区 &#x2192;</button>
       </div>
+      <div id="home-hall-cards"></div>
     </div>
   </div>
 </div>
+
+<script>
+// Home page interaction logic
+var _homeBeltsData = [
+  {name:'珠三角产业带',key:'珠三角',color:'#5b8def',total:9996,provinces:'广东省',desc:'全球制造业核心，电子家电/五金/家居重镇',types:{生产:5353,外贸:2481,工贸:2047},features:'斜挎包 | 手袋 | 家居用品 | 西式餐具'},
+  {name:'长三角产业带',key:'长三角',color:'#b07aff',total:17157,provinces:'上海/江苏/浙江',desc:'外贸第一梯队，涵盖轻工/纺织/机电全品类',types:{生产:8338,外贸:6068,工贸:2614},features:'女装外套 | 家居用品 | 靠垫 | 通用机械'},
+  {name:'环渤海产业带',key:'环渤海',color:'#36d6b6',total:8306,provinces:'北京/天津/山东/河北',desc:'重工业+外贸枢纽，农产品加工/建材/机械',types:{生产:4010,外贸:3034,工贸:1175},features:'通用机械 | 桌布 | 金属网 | 靠垫'},
+  {name:'海峡西岸产业带',key:'海峡西岸',color:'#51cf66',total:3440,provinces:'福建省',desc:'鞋服/石材/茶叶/卫浴出口重镇',types:{生产:1200,外贸:1560,工贸:658},features:'背包 | 旅行包 | 休闲男鞋 | 跑步鞋'},
+  {name:'中部崛起产业带',key:'中部崛起',color:'#ffa94d',total:6187,provinces:'安徽/江西/河南/湖北/湖南',desc:'承接沿海产业转移，制造业快速崛起',types:{生产:3183,外贸:2013,工贸:907},features:'男女装 | 旅行包 | 女装外套 | 口罩'},
+  {name:'东北振兴产业带',key:'东北振兴',color:'#ff6b6b',total:1815,provinces:'吉林/辽宁/黑龙江',desc:'重工业基地，农产品/矿产/装备制造',types:{生产:671,外贸:787,工贸:294},features:'圣诞装饰 | 一次性餐具 | 人造花果'},
+  {name:'西部开放产业带',key:'西部开放',color:'#f06595',total:5624,provinces:'川/渝/陕/桂/滇等14省',desc:'特色产业+一带一路前沿，差异化品类丰富',types:{生产:2424,外贸:2233,工贸:722},features:'红酒杯 | 玻璃杯 | 批发零售'}
+];
+
+function showHomeDetail(section) {
+  document.querySelectorAll('.home-nav-item').forEach(function(el,i){
+    el.classList.toggle('active', (section==='canton'&&i===0)||(section==='ieae'&&i===1));
+  });
+  document.getElementById('home-detail-canton').style.display = section==='canton'?'block':'none';
+  document.getElementById('home-detail-ieae').style.display = section==='ieae'?'block':'none';
+  document.getElementById('home-belt-filters').style.display = section==='canton'?'block':'none';
+  document.getElementById('home-ieae-filters').style.display = section==='ieae'?'block':'none';
+  document.getElementById('home-belt-cards').innerHTML = '';
+  document.getElementById('home-hall-cards').innerHTML = '';
+  // Reset filter buttons
+  document.querySelectorAll('.belt-filter-btn').forEach(function(b,i){b.classList.toggle('active',i===0);});
+}
+
+function filterHomeBelt(key, btn) {
+  btn.parentElement.querySelectorAll('.belt-filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var container = document.getElementById('home-belt-cards');
+  if (key==='all') { container.innerHTML=''; return; }
+  var belt = _homeBeltsData.find(function(b){return b.key===key;});
+  if (!belt) return;
+  var typesHtml = Object.keys(belt.types).map(function(k){
+    return '<div class="stat-box"><div class="sv" style="color:'+belt.color+'">'+belt.types[k].toLocaleString()+'</div><div class="sl">'+k+'企业</div></div>';
+  }).join('');
+  container.innerHTML =
+    '<div class="home-detail-card" style="border-left:4px solid '+belt.color+'">' +
+      '<div class="detail-header">' +
+        '<span style="width:10px;height:10px;border-radius:50%;background:'+belt.color+';box-shadow:0 0 10px '+belt.color+'"></span>' +
+        '<div><div class="detail-title" style="color:'+belt.color+'">'+belt.name+'</div>' +
+        '<div class="detail-sub">'+belt.provinces+' · '+belt.total.toLocaleString()+' 家供应商</div></div>' +
+      '</div>' +
+      '<div class="detail-stats">'+typesHtml+'</div>' +
+      '<div class="detail-desc" style="margin-top:10px">'+belt.desc+'<br><span style="color:var(--text-dim);font-size:12px">核心品类：'+belt.features+'</span></div>' +
+      '<button class="home-enter-btn blue" onclick="switchSection(\'canton\', document.querySelectorAll(\'.nav-tab\')[1])">进入广交会分区查看详情 &#x2192;</button>' +
+    '</div>';
+}
+
+function filterHomeHall(hall, btn) {
+  btn.parentElement.querySelectorAll('.belt-filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var container = document.getElementById('home-hall-cards');
+  if (hall==='all') { container.innerHTML=''; return; }
+  var hallData = {'6':{name:'6号馆',count:131,cats:'风扇/空气处理、个人护理/美容、厨房电器、清洁电器、综合小家电'},'7':{name:'7号馆',count:114,cats:'音频/游戏设备、电脑/办公、消费电子/数码、照明/灯具'},'8':{name:'8号馆',count:136,cats:'充电/电源配件、消费电子/配件、智能家居/IoT、3C配件'},'9':{name:'9号馆',count:242,cats:'电子元器件/配件、音频/游戏设备、充电/电源配件'}};
+  var h = hallData[hall];
+  if (!h) return;
+  container.innerHTML =
+    '<div class="home-detail-card" style="border-left:4px solid #b07aff">' +
+      '<div class="detail-header"><span class="detail-icon">&#x1f3e2;</span>' +
+        '<div><div class="detail-title" style="color:#b07aff">'+h.name+'</div>' +
+        '<div class="detail-sub">'+h.count+' 家供应商</div></div>' +
+      '</div>' +
+      '<div class="detail-desc">主要类目：'+h.cats+'</div>' +
+      '<button class="home-enter-btn purple" onclick="switchSection(\'ieae\', document.querySelectorAll(\'.nav-tab\')[2])">进入IEAE分区查看详情 &#x2192;</button>' +
+    '</div>';
+}
+</script>
 
 <!-- ===== SECTION: CANTON FAIR (分区1) ===== -->
 <div id="section-canton" class="section-panel">
