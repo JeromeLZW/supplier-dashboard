@@ -1098,12 +1098,7 @@ function switchSection(sectionId, tabBtn) {
   共采集 54,022 家供应商 | 覆盖 7 大产业带 62 个省份/地区 | Jerome供应商产业带汇总
 </div>
 
-<!-- TOOLBOX -->
-    <div class="tb-ov" id="tbOv"><div class="tb-win"><div class="tb-hdr"><h2>🧰 <em>万能</em>工具箱</h2><button class="tb-xb" id="tbXb">✕</button></div>
-    <div class="tb-bd"><div class="app"><div class="tabs" id="_tbTabs"></div>
-    <div id="_tbP-unit" class="panel hidden"></div><div id="_tbP-currency" class="panel hidden"></div>
-    <div id="_tbP-calendar" class="panel hidden"></div><div id="_tbP-calc" class="panel hidden"></div>
-    <div id="_tbP-bom" class="panel hidden"></div></div></div></div></div>
+<!-- TOOLBOX moved to body level -->
 
 <!-- ===== SCRIPT 1: Main JS ===== -->
 <script>
@@ -1728,66 +1723,137 @@ function renderAll(){
   else if(activeTab==='bom') renderBom();
 }
 
-// ====================== UNIT CONVERTER ======================
-function unitConvertForward(v){
-  if(isNaN(v)||v==='')return '—';
-  v=parseFloat(v); const c=UNIT_CATS[unitCat];
-  if(c.special) return convertTemp(v,unitFrom,unitTo).toFixed(4);
-  const base=v*c.b[unitFrom];
-  return (base/c.b[unitTo]).toFixed(8).replace(/\.?0+$/,'');
-}
-function unitConvertReverse(v){
-  if(isNaN(v)||v==='')return '—';
-  v=parseFloat(v); const c=UNIT_CATS[unitCat];
-  if(c.special) return convertTemp(v,unitTo,unitFrom).toFixed(4);
-  const base=v*c.b[unitTo];
-  return (base/c.b[unitFrom]).toFixed(8).replace(/\.?0+$/,'');
-}
-function syncUnit(direction){
-  if(direction==='from'){
-    unitValTo=unitConvertForward(unitVal);
-    if(unitValTo==='—')unitValTo='';
-  } else {
-    unitVal=unitConvertReverse(unitValTo);
-    if(unitVal==='—')unitVal='';
+// ====================== UNIT CONVERTER (Optimized Grid Style) ======================
+function _ufmt(n) {
+  if (n === 0) return '0';
+  const abs = Math.abs(n);
+  if (abs >= 0.01 && abs < 1e9) {
+    let s = n.toPrecision(6);
+    if (s.includes('.')) s = s.replace(/\.?0+$/, '');
+    return s;
   }
+  return n.toExponential(4);
 }
 
 function renderUnit(){
-  // compute initial sync
-  if(unitLastEdit==='from') syncUnit('from'); else syncUnit('to');
-
   const p=_tb$('panel-unit');
   const cats=Object.keys(UNIT_CATS);
-  const c=UNIT_CATS[unitCat];
-  const opts=u=>c.u.map(x=>`<option value="${x}"${x===u?' selected':''}>${x}</option>`).join('');
-  p.innerHTML=`
-    <div class="pills" id="unit-pills"></div>
-    <div class="card">
-      <div class="label">从</div>
-      <div class="input-row">
-        <input type="number" class="num-input" id="unit-input" value="${unitVal}">
-        <select class="unit-select" id="unit-from">${opts(unitFrom)}</select>
+
+  // Category pills
+  let pillsHTML = '<div class="pills" id="unit-pills" style="margin-bottom:12px"></div>';
+
+  // Get current category
+  const c = UNIT_CATS[unitCat];
+  const isTemp = c.special;
+
+  // Build unit rows - each unit gets an input, typing in any auto-converts all others
+  let rowsHTML = '';
+  c.u.forEach((uName, i) => {
+    rowsHTML += `
+      <div style="display:grid;grid-template-columns:120px 1fr 30px 1fr;align-items:center;gap:6px;margin-bottom:4px">
+        <div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${uName}">
+          <span style="color:var(--text);font-weight:600">${uName}</span>
+        </div>
+        <input type="number" step="any" class="num-input" id="uv-${i}" data-uidx="${i}"
+          placeholder="输入..." style="font-size:13px;padding:8px 10px;text-align:right">
+        <div style="text-align:center;color:var(--border);font-size:14px">→</div>
+        <div id="ur-${i}" style="padding:7px 10px;font-size:13px;text-align:right;color:var(--green);font-weight:600;min-height:33px;display:flex;align-items:center;justify-content:flex-end;border-radius:8px"></div>
+      </div>`;
+    if (i < c.u.length - 1) {
+      rowsHTML += '<hr style="border:none;border-top:1px solid var(--border);margin:3px 0">';
+    }
+  });
+
+  // Quick reference for common conversions
+  const quickRefs = {
+    '长度': [['1 英寸(in)','= 2.54 cm'],['1 英尺(ft)','= 30.48 cm'],['1 英里(mi)','= 1.609 km']],
+    '重量': [['1 磅(lb)','= 453.6 g'],['1 盎司(oz)','= 28.35 g'],['1 斤','= 500 g']],
+    '体积': [['1 加仑','= 3.785 L'],['1 液量盎司','= 29.57 mL'],['1 夸脱','= 0.946 L']],
+    '面积': [['1 亩','= 666.7 m²'],['1 英亩','= 4047 m²'],['1 坪','= 3.306 m²']],
+    '温度': [['0°C','= 32°F = 273.15K'],['100°C','= 212°F'],['37°C','= 98.6°F']],
+  };
+  let quickHTML = '';
+  if (quickRefs[unitCat]) {
+    quickHTML = `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--primary);display:inline-block"></span>常用速查
       </div>
-      <div style="text-align:center;margin:6px 0"><button class="swap-btn" id="unit-swap">⇅</button></div>
-      <div class="label">到</div>
-      <div class="input-row">
-        <input type="number" class="num-input" id="unit-input-to" value="${unitValTo}" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">
-        <select class="unit-select" id="unit-to">${opts(unitTo)}</select>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${quickRefs[unitCat].map(q => `<div style="background:#FAFAF8;border:1px solid var(--border);border-radius:6px;padding:5px 10px;display:flex;gap:8px;font-size:11px">
+          <span style="color:var(--text2)">${q[0]}</span><span style="color:var(--gold);font-weight:600">${q[1]}</span>
+        </div>`).join('')}
       </div>
     </div>`;
-  // pills
-  const pc=_tb$('unit-pills');
-  cats.forEach(ct=>{
-    const b=el('button','pill '+(unitCat===ct?'on':'off'),ct);
-    b.onclick=()=>{unitCat=ct;const nc=UNIT_CATS[ct];unitFrom=nc.u[0];unitTo=nc.u[1];unitVal='1';unitLastEdit='from';renderUnit();};
+  }
+
+  p.innerHTML = pillsHTML + `
+    <div class="card" style="padding:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span style="font-size:20px">📐</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text)">${unitCat}单位换算</div>
+          <div style="font-size:11px;color:var(--text2)">在任意输入框输入数值，同类所有单位自动换算</div>
+        </div>
+      </div>
+      ${rowsHTML}
+      <button class="bom-btn primary" style="width:100%;margin-top:10px;padding:8px;font-size:12px;border-radius:8px" onclick="document.querySelectorAll('[id^=uv-]').forEach(function(e){e.value='';});document.querySelectorAll('[id^=ur-]').forEach(function(e){e.textContent='';e.style.background='';})">清除全部</button>
+      ${quickHTML}
+    </div>`;
+
+  // Category pills
+  const pc = _tb$('unit-pills');
+  cats.forEach(ct => {
+    const b = el('button', 'pill ' + (unitCat === ct ? 'on' : 'off'), ct);
+    b.onclick = () => { unitCat = ct; renderUnit(); };
     pc.appendChild(b);
   });
-  _tb$('unit-input').oninput=e=>{unitVal=e.target.value;unitLastEdit='from';syncUnit('from');_tb$('unit-input-to').value=unitValTo;};
-  _tb$('unit-input-to').oninput=e=>{unitValTo=e.target.value;unitLastEdit='to';syncUnit('to');_tb$('unit-input').value=unitVal;};
-  _tb$('unit-from').onchange=e=>{unitFrom=e.target.value;if(unitLastEdit==='from')syncUnit('from'); else syncUnit('to');_tb$('unit-input').value=unitVal;_tb$('unit-input-to').value=unitValTo;};
-  _tb$('unit-to').onchange=e=>{unitTo=e.target.value;if(unitLastEdit==='from')syncUnit('from'); else syncUnit('to');_tb$('unit-input').value=unitVal;_tb$('unit-input-to').value=unitValTo;};
-  _tb$('unit-swap').onclick=()=>{[unitFrom,unitTo]=[unitTo,unitFrom];[unitVal,unitValTo]=[unitValTo,unitVal];unitLastEdit=unitLastEdit==='from'?'to':'from';renderUnit();};
+
+  // Wire up inputs - type in any → convert all others
+  document.querySelectorAll('[data-uidx]').forEach(inp => {
+    inp.addEventListener('input', function() {
+      const idx = parseInt(this.dataset.uidx);
+      const val = this.value.trim();
+
+      // Clear other inputs
+      document.querySelectorAll('[data-uidx]').forEach(other => {
+        if (other !== this) { other.value = ''; }
+      });
+
+      // Clear all results if empty
+      if (val === '' || isNaN(parseFloat(val))) {
+        c.u.forEach((_, i) => {
+          const res = document.getElementById('ur-' + i);
+          res.textContent = ''; res.style.background = '';
+        });
+        return;
+      }
+
+      const num = parseFloat(val);
+
+      if (isTemp) {
+        // Temperature special handling
+        c.u.forEach((uName, i) => {
+          const res = document.getElementById('ur-' + i);
+          if (i === idx) { res.textContent = ''; res.style.background = ''; return; }
+          const converted = convertTemp(num, c.u[idx], uName);
+          res.textContent = _ufmt(converted);
+          res.style.background = 'rgba(34,197,94,0.06)';
+          res.style.borderRadius = '8px';
+        });
+      } else {
+        // Normal conversion: input → base → each
+        const baseVal = num * c.b[c.u[idx]];
+        c.u.forEach((uName, i) => {
+          const res = document.getElementById('ur-' + i);
+          if (i === idx) { res.textContent = ''; res.style.background = ''; return; }
+          const converted = baseVal / c.b[uName];
+          res.textContent = _ufmt(converted);
+          res.style.background = 'rgba(34,197,94,0.06)';
+          res.style.borderRadius = '8px';
+        });
+      }
+    });
+  });
 }
 
 // ====================== CURRENCY ======================
@@ -10794,6 +10860,13 @@ function ieaeApplyFilters() {
     '筛选结果：' + visible + ' 家供应商';
 }
 </script>
+
+<!-- TOOLBOX (body level, always accessible) -->
+<div class="tb-ov" id="tbOv"><div class="tb-win"><div class="tb-hdr"><h2>🧰 <em>万能</em>工具箱</h2><button class="tb-xb" id="tbXb">✕</button></div>
+<div class="tb-bd"><div class="app"><div class="tabs" id="_tbTabs"></div>
+<div id="_tbP-unit" class="panel hidden"></div><div id="_tbP-currency" class="panel hidden"></div>
+<div id="_tbP-calendar" class="panel hidden"></div><div id="_tbP-calc" class="panel hidden"></div>
+<div id="_tbP-bom" class="panel hidden"></div></div></div></div></div>
 
 </div><!-- end dashboard-content -->
 
